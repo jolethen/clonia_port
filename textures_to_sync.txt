@@ -1,0 +1,4 @@
+mcl_core_stone.png:stone_clonia.png
+mcl_core_dirt.png:dirt_clonia.png
+mcl_core_grass_block_top.png:grass_clonia.png
+mcl_core_sand.png:sand_clonia.png
