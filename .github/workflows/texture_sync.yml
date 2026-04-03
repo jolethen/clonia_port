@@ -1,0 +1,33 @@
+name: Texture Forwarding Bot
+on:
+  workflow_dispatch: # This adds a "Run" button on the GitHub website
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your mod
+        uses: actions/checkout@v4
+
+      - name: Clone Mineclonia Source
+        run: git clone --depth 1 https://github.com/the-mineclonia-team/mineclonia.git temp_mcl
+
+      - name: Process Mapping File
+        run: |
+          mkdir -p textures
+          # This reads your text file line by line
+          while IFS=: read -r src dest || [ -n "$src" ]; do
+            # Skip empty lines or comments
+            [[ -z "$src" || "$src" =~ ^# ]] && continue
+            
+            # Find the file inside Mineclonia and copy it
+            find temp_mcl -name "$src" -exec cp {} ./textures/"$dest" \;
+          done < textures_to_sync.txt
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add textures/
+          git commit -m "Bot: Updated textures from mapping file" || exit 0
+          git push
